@@ -1,8 +1,8 @@
 ﻿using Net10.UserManagement.Application.Abstracts;
-using Net10.UserManagement.Application.Models;
 using Net10.UserManagement.Domain.Repositories;
+using Net10.UserManagement.Application.Users.Models;
 
-namespace Net10.UserManagement.Application.Services;
+namespace Net10.UserManagement.Application.Users.Services;
 
 public class UserService (IUserRepository userRepository) : IUserService
 {

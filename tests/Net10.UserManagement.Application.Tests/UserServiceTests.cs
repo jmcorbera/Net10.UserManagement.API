@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
-using Net10.UserManagement.Application.Services;
+using Net10.UserManagement.Application.Users.Services;
 using Net10.UserManagement.Domain.Entities;
 using Net10.UserManagement.Domain.Repositories;
 
@@ -11,17 +11,10 @@ public class UserServiceTests
     [Fact]
     public async Task GetAllAsync_Should_Map_Users_To_UserDtos()
     {
-        var createdAt = new DateTime(2026, 4, 1, 12, 0, 0, DateTimeKind.Utc);
+
         var users = new[]
         {
-            new User
-            {
-                Id = Guid.NewGuid(),
-                Email = "john.doe@example.com",
-                FirstName = "John",
-                LastName = "Doe",
-                CreatedAt = createdAt
-            }
+            User.CreatePending("john.doe@example.com", "John", "Doe")
         };
 
         var repositoryMock = new Mock<IUserRepository>();

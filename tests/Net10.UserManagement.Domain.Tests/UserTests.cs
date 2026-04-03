@@ -1,38 +1,50 @@
 ﻿using Net10.UserManagement.Domain.Entities;
+using Net10.UserManagement.Domain.Enums;
 
 namespace Net10.UserManagement.Domain.Tests;
 
 public class UserTests
 {
     [Fact]
-    public void User_Should_Initialize_String_Properties_With_Empty_String()
+    public void CreatePending_Should_Create_User_With_Pending_Status()
     {
-        var user = new User();
+        var user = User.CreatePending("jane.doe@example.com", "Jane", "Doe");
 
-        Assert.Equal(string.Empty, user.Email);
-        Assert.Equal(string.Empty, user.FirstName);
-        Assert.Equal(string.Empty, user.LastName);
-    }
-
-    [Fact]
-    public void User_Should_Preserve_Assigned_Property_Values()
-    {
-        var id = Guid.NewGuid();
-        var createdAt = new DateTime(2026, 4, 1, 12, 0, 0, DateTimeKind.Utc);
-
-        var user = new User
-        {
-            Id = id,
-            Email = "jane.doe@example.com",
-            FirstName = "Jane",
-            LastName = "Doe",
-            CreatedAt = createdAt
-        };
-
-        Assert.Equal(id, user.Id);
+        Assert.NotEqual(Guid.Empty, user.Id);
         Assert.Equal("jane.doe@example.com", user.Email);
         Assert.Equal("Jane", user.FirstName);
         Assert.Equal("Doe", user.LastName);
-        Assert.Equal(createdAt, user.CreatedAt);
+        Assert.Equal(Status.Pending, user.Status);
+        Assert.True(user.CreatedAt <= DateTime.UtcNow);
+    }
+
+    [Fact]
+    public void CreatePending_Should_Throw_When_Email_Is_Invalid()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            User.CreatePending("invalid-email", "John", "Doe"));
+    }
+
+    [Fact]
+    public void CreatePending_Should_Throw_When_FirstName_Is_Empty_or_Null()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            User.CreatePending("test@example.com", "", "Doe"));
+
+        Assert.Throws<ArgumentException>(() =>
+            User.CreatePending("test@example.com", null!, "Doe"));
+    }
+    
+    [Fact]
+    public void CreatePending_Should_Throw_When_LastName_Is_Empty_or_Null()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            User.CreatePending("test@example.com", "John", ""));
+
+        Assert.Throws<ArgumentException>(() =>
+            User.CreatePending("test@example.com", "John", null!));
     }
 }
