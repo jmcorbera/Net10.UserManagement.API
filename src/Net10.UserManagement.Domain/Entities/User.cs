@@ -15,14 +15,24 @@ public class User
     {
         Id = Guid.NewGuid();
         SetEmail(email);
+        SetFirstName(firstName);
+        SetLastName(lastName);
+        CreatedAt = DateTime.UtcNow;
+        SetPending();
+    }
+
+    private void SetFirstName(string firstName)
+    {
         if (string.IsNullOrWhiteSpace(firstName))
             throw new ArgumentException("First name cannot be empty", nameof(firstName));
         FirstName = firstName;
+    }
+
+    private void SetLastName(string lastName)
+    {
         if (string.IsNullOrWhiteSpace(lastName))
             throw new ArgumentException("Last name cannot be empty", nameof(lastName));
         LastName = lastName;
-        CreatedAt = DateTime.UtcNow;
-        SetPending();
     }
 
     public static User CreatePending(string email, string firstName, string lastName)
