@@ -388,6 +388,9 @@ FodyWeavers.xsd
 .vscode/*
 *.code-workspace
 
+# Coverage reports
+CoverageReport/
+
 # Local History for Visual Studio Code
 .history/
 
