@@ -4,9 +4,9 @@ namespace Net10.UserManagement.Application.Abstracts;
 
 public interface IUserService
 {
-    Task<IEnumerable<UserDto>> GetAllAsync();
-    Task<UserDto?> GetByIdAsync(Guid id);
-    Task<UserDto?> CreateAsync(UserCommand user);
-    Task<UserDto?> UpdateAsync(Guid id, UserCommand user);
-    Task<bool> DeleteAsync(Guid id);
+    Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<UserDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<UserDto?> CreateAsync(UserCreateCommand user, CancellationToken cancellationToken = default);
+    Task<UserDto?> UpdateAsync(Guid id, UserUpdateCommand user, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

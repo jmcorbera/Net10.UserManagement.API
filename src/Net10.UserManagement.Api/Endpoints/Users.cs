@@ -55,7 +55,7 @@ public static class Users
         return Results.Ok(user);
     }
 
-    private static async Task<IResult> CreateUser(IUserService userService, UserCommand user)
+    private static async Task<IResult> CreateUser(IUserService userService, UserCreateCommand user)
     {
         var createdUser = await userService.CreateAsync(user);
         if (createdUser == null)
@@ -64,7 +64,7 @@ public static class Users
         return Results.Created($"/api/v1/users/{createdUser.Id}", createdUser);
     }
 
-    private static async Task<IResult> UpdateUser(IUserService userService, Guid id, UserCommand user)
+    private static async Task<IResult> UpdateUser(IUserService userService, Guid id, UserUpdateCommand user)
     {
         var updatedUser = await userService.UpdateAsync(id, user);
         if (updatedUser == null)
@@ -75,10 +75,7 @@ public static class Users
 
     private static async Task<IResult> DeleteUser(IUserService userService, Guid id)
     {
-        var deleted = await userService.DeleteAsync(id);
-        if (!deleted)
-            return Results.NotFound();
-
+        await userService.DeleteAsync(id);
         return Results.NoContent();
     }
 

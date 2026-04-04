@@ -5,9 +5,9 @@ namespace Net10.UserManagement.Domain.Entities;
 public class User
 {
     public Guid Id { get; private set; }
-    public string Email { get; private set; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
+    public string Email { get; private set; } = null!;
+    public string FirstName { get; private set; } = null!;
+    public string LastName { get; private set; } = null!;
     public Status Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -19,6 +19,16 @@ public class User
         SetLastName(lastName);
         CreatedAt = DateTime.UtcNow;
         SetPending();
+    }
+
+    public static User CreatePending(string email, string firstName, string lastName)
+    {
+        return new User(email, firstName, lastName);
+    }
+
+    public void UpdateEmail(string newEmail)
+    {
+        SetEmail(newEmail);
     }
 
     private void SetFirstName(string firstName)
@@ -35,12 +45,8 @@ public class User
         LastName = lastName;
     }
 
-    public static User CreatePending(string email, string firstName, string lastName)
-    {
-        return new User(email, firstName, lastName);
-    }
 
-    public void SetEmail(string email)
+    private void SetEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("Email cannot be empty", nameof(email));
