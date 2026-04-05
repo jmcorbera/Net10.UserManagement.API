@@ -12,10 +12,10 @@ using AutoMapper;
 
 namespace Net10.UserManagement.Application.Tests;
 
-public class UserServiceTests
+public class UserHandlersTests
 {
     [Fact]
-    public async Task GetAllAsync_Should_Map_Users_To_UserDtos()
+    public async Task GetAllAsync_Should_Map_Users_To_UserResponse()
     {
         var users = new[]
         {
@@ -69,7 +69,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_Should_Return_UserDto_When_User_Exists()
+    public async Task GetByIdAsync_Should_Return_UserResponse_When_User_Exists()
     {
         // Arrange
         var user = User.CreatePending("test@example.com", "John", "Doe");
@@ -125,7 +125,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_Should_Create_User_And_Return_UserDto()
+    public async Task CreateAsync_Should_Create_User_And_Return_UserResponse()
     {
         // Arrange
         var createCommand = new CreateUserCommand(
@@ -165,7 +165,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_Should_Update_User_Email_And_Return_UserDto()
+    public async Task UpdateAsync_Should_Update_User_Email_And_Return_UserResponse()
     {
         // Arrange
         var user = User.CreatePending("old@example.com", "John", "Doe");
