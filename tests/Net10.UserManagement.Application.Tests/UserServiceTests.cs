@@ -5,8 +5,10 @@ using Net10.UserManagement.Application.Users.Commands.DeleteUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
 using Net10.UserManagement.Application.Users.Queries.GetUsers;
 using Net10.UserManagement.Application.Users.Queries.GetUserById;
+using Net10.UserManagement.Application.Users.Models;
 using Net10.UserManagement.Domain.Entities;
 using Net10.UserManagement.Domain.Repositories;
+using AutoMapper;
 
 namespace Net10.UserManagement.Application.Tests;
 
@@ -15,7 +17,6 @@ public class UserServiceTests
     [Fact]
     public async Task GetAllAsync_Should_Map_Users_To_UserDtos()
     {
-
         var users = new[]
         {
             User.CreatePending("john.doe@example.com", "John", "Doe")
@@ -26,7 +27,19 @@ public class UserServiceTests
             .Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(users);
 
-        var handler = new GetUsersQueryHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+        mapperMock
+            .Setup(m => m.Map<UserResponse>(It.IsAny<User>()))
+            .Returns((User u) => new UserResponse
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                CreatedAt = u.CreatedAt
+            });
+
+        var handler = new GetUsersQueryHandler(repositoryMock.Object, mapperMock.Object);
 
         var result = (await handler.Handle(new GetUsersQuery(), CancellationToken.None)).ToList();
 
@@ -46,7 +59,9 @@ public class UserServiceTests
             .Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync([]);
 
-        var handler = new GetUsersQueryHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+
+        var handler = new GetUsersQueryHandler(repositoryMock.Object, mapperMock.Object);
     
         var result = (await handler.Handle(new GetUsersQuery(), CancellationToken.None)).ToList();
 
@@ -63,7 +78,19 @@ public class UserServiceTests
             .Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         
-        var handler = new GetUserByIdQueryHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+        mapperMock
+            .Setup(m => m.Map<UserResponse>(It.IsAny<User>()))
+            .Returns((User u) => new UserResponse
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                CreatedAt = u.CreatedAt
+            });
+
+        var handler = new GetUserByIdQueryHandler(repositoryMock.Object, mapperMock.Object);
         
         // Act
         var result = await handler.Handle(new GetUserByIdQuery(user.Id), CancellationToken.None);
@@ -86,7 +113,9 @@ public class UserServiceTests
             .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
         
-        var handler = new GetUserByIdQueryHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+
+        var handler = new GetUserByIdQueryHandler(repositoryMock.Object, mapperMock.Object);
         
         // Act
         var result = await handler.Handle(new GetUserByIdQuery(userId), CancellationToken.None);
@@ -110,7 +139,19 @@ public class UserServiceTests
             .Setup(r => r.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((User user, CancellationToken _) => user);
         
-        var service = new CreateUserCommandHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+        mapperMock
+            .Setup(m => m.Map<UserResponse>(It.IsAny<User>()))
+            .Returns((User u) => new UserResponse
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                CreatedAt = u.CreatedAt
+            });
+
+        var service = new CreateUserCommandHandler(repositoryMock.Object, mapperMock.Object);
         
         // Act
         var result = await service.Handle(createCommand, CancellationToken.None);
@@ -141,7 +182,19 @@ public class UserServiceTests
             .Setup(r => r.UpdateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((User u, CancellationToken _) => u);
         
-        var service = new UpdateUserCommandHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+        mapperMock
+            .Setup(m => m.Map<UserResponse>(It.IsAny<User>()))
+            .Returns((User u) => new UserResponse
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                CreatedAt = u.CreatedAt
+            });
+
+        var service = new UpdateUserCommandHandler(repositoryMock.Object, mapperMock.Object);
         
         // Act
         var result = await service.Handle(new UpdateUserCommand(user.Id, updateCommand.Email), CancellationToken.None);
@@ -167,7 +220,9 @@ public class UserServiceTests
             .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
         
-        var service = new UpdateUserCommandHandler(repositoryMock.Object);
+        var mapperMock = new Mock<IMapper>();
+
+        var service = new UpdateUserCommandHandler(repositoryMock.Object, mapperMock.Object);
         
         // Act
         var result = await service.Handle(new UpdateUserCommand(userId, updateCommand.Email), CancellationToken.None);

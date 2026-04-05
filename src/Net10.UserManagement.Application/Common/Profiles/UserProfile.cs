@@ -1,19 +1,13 @@
 using Net10.UserManagement.Application.Users.Models;
 using Net10.UserManagement.Domain.Entities;
+using AutoMapper;
 
 namespace Net10.UserManagement.Application.Common.Profiles;
 
-public class UserProfile
+public class UserProfile : Profile
 {
-    public static UserResponse UserMapToUserDto(User u)
+    public UserProfile()
     {
-        return new UserResponse
-        {
-            Id = u.Id,
-            Email = u.Email,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            CreatedAt = u.CreatedAt
-        };
+        CreateMap<User, UserResponse>();
     }
 }
