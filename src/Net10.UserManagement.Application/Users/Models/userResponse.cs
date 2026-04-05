@@ -1,6 +1,6 @@
 ﻿namespace Net10.UserManagement.Application.Users.Models;
 
-public class UserDto
+public class UserResponse
 {
     public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;

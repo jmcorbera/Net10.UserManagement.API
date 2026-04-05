@@ -1,5 +1,6 @@
 using Net10.UserManagement.Application.Abstracts;
-using Net10.UserManagement.Application.Users.Models;
+using Net10.UserManagement.Application.Users.Commands.CreateUser;
+using Net10.UserManagement.Application.Users.Commands.UpdateUser;
 
 namespace Net10.UserManagement.Api.Endpoints;
 
@@ -55,7 +56,7 @@ public static class Users
         return Results.Ok(user);
     }
 
-    private static async Task<IResult> CreateUser(IUserService userService, UserCreateCommand user)
+    private static async Task<IResult> CreateUser(IUserService userService, CreateUserCommand user)
     {
         var createdUser = await userService.CreateAsync(user);
         if (createdUser == null)
@@ -64,7 +65,7 @@ public static class Users
         return Results.Created($"/api/v1/users/{createdUser.Id}", createdUser);
     }
 
-    private static async Task<IResult> UpdateUser(IUserService userService, Guid id, UserUpdateCommand user)
+    private static async Task<IResult> UpdateUser(IUserService userService, Guid id, UpdateUserCommand user)
     {
         var updatedUser = await userService.UpdateAsync(id, user);
         if (updatedUser == null)

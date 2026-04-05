@@ -1,6 +1,6 @@
-namespace Net10.UserManagement.Application.Users.Models;
+namespace Net10.UserManagement.Application.Users.Commands.CreateUser;
 
-public class UserCreateCommand
+public class CreateUserCommand
 {
     public string Email { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;

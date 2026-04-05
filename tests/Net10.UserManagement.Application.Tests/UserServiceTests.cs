@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
-using Net10.UserManagement.Application.Users.Models;
+using Net10.UserManagement.Application.Users.Commands.CreateUser;
+using Net10.UserManagement.Application.Users.Commands.UpdateUser;
 using Net10.UserManagement.Application.Users.Services;
 using Net10.UserManagement.Domain.Entities;
 using Net10.UserManagement.Domain.Repositories;
@@ -41,10 +42,10 @@ public class UserServiceTests
         var repositoryMock = new Mock<IUserRepository>();
         repositoryMock
             .Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Array.Empty<User>());
+            .ReturnsAsync([]);
 
         var service = new UserService(repositoryMock.Object);
-
+    
         var result = await service.GetAllAsync();
 
         result.Should().BeEmpty();
@@ -96,7 +97,7 @@ public class UserServiceTests
     public async Task CreateAsync_Should_Create_User_And_Return_UserDto()
     {
         // Arrange
-        var createCommand = new UserCreateCommand
+        var createCommand = new CreateUserCommand
         {
             Email = "john.doe@example.com",
             FirstName = "John",
@@ -126,7 +127,7 @@ public class UserServiceTests
     {
         // Arrange
         var user = User.CreatePending("old@example.com", "John", "Doe");
-        var updateCommand = new UserUpdateCommand
+        var updateCommand = new UpdateUserCommand
         {
             Email = "new@example.com"
         };
@@ -155,7 +156,7 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var updateCommand = new UserUpdateCommand
+        var updateCommand = new UpdateUserCommand
         {
             Email = "new@example.com"
         };

@@ -5,6 +5,9 @@ using Moq;
 using Net10.UserManagement.Api.Endpoints;
 using Net10.UserManagement.Application.Abstracts;
 using Net10.UserManagement.Application.Users.Models;
+using Net10.UserManagement.Application.Users.Commands.CreateUser;
+using Net10.UserManagement.Application.Users.Commands.UpdateUser;
+
 using System.Reflection;
 
 namespace Net10.UserManagement.Api.Tests;
@@ -21,9 +24,9 @@ public class UsersEndpointsTests
     [Fact]
     public async Task GetUsers_Should_Return_Ok_When_Users_Exist()
     {
-        var users = new List<UserDto>
+        var users = new List<UserResponse>
         {
-            new UserDto
+            new UserResponse
             {
                 Id = Guid.NewGuid(),
                 Email = "john.doe@example.com",
@@ -31,7 +34,7 @@ public class UsersEndpointsTests
                 LastName = "Doe",
                 CreatedAt = DateTime.UtcNow
             },
-            new UserDto
+            new UserResponse
             {
                 Id = Guid.NewGuid(),
                 Email = "jane.doe@example.com",
@@ -47,8 +50,8 @@ public class UsersEndpointsTests
 
         var result = await InvokePrivateMethod<IResult>("GetUsers", _userServiceMock.Object);
 
-        result.Should().BeOfType<Ok<IEnumerable<UserDto>>>();
-        var okResult = result as Ok<IEnumerable<UserDto>>;
+        result.Should().BeOfType<Ok<IEnumerable<UserResponse>>>();
+        var okResult = result as Ok<IEnumerable<UserResponse>>;
         okResult!.Value.Should().HaveCount(2);
         okResult.Value.Should().BeEquivalentTo(users);
     }
@@ -58,7 +61,7 @@ public class UsersEndpointsTests
     {
         _userServiceMock
             .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<UserDto>());
+            .ReturnsAsync(new List<UserResponse>());
 
         var result = await InvokePrivateMethod<IResult>("GetUsers", _userServiceMock.Object);
 
@@ -70,7 +73,7 @@ public class UsersEndpointsTests
     {
         _userServiceMock
             .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync((IEnumerable<UserDto>)null!);
+            .ReturnsAsync((IEnumerable<UserResponse>)null!);
 
         var result = await InvokePrivateMethod<IResult>("GetUsers", _userServiceMock.Object);
 
@@ -81,7 +84,7 @@ public class UsersEndpointsTests
     public async Task GetUserById_Should_Return_Ok_When_User_Exists()
     {
         var userId = Guid.NewGuid();
-        var user = new UserDto
+        var user = new UserResponse
         {
             Id = userId,
             Email = "john.doe@example.com",
@@ -96,8 +99,8 @@ public class UsersEndpointsTests
 
         var result = await InvokePrivateMethod<IResult>("GetUserById", _userServiceMock.Object, userId);
 
-        result.Should().BeOfType<Ok<UserDto>>();
-        var okResult = result as Ok<UserDto>;
+        result.Should().BeOfType<Ok<UserResponse>>();
+        var okResult = result as Ok<UserResponse>;
         okResult!.Value.Should().BeEquivalentTo(user);
     }
 
@@ -108,7 +111,7 @@ public class UsersEndpointsTests
 
         _userServiceMock
             .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((UserDto)null!);
+            .ReturnsAsync((UserResponse)null!);
 
         var result = await InvokePrivateMethod<IResult>("GetUserById", _userServiceMock.Object, userId);
 
@@ -118,14 +121,14 @@ public class UsersEndpointsTests
     [Fact]
     public async Task CreateUser_Should_Return_Created_When_User_Is_Created_Successfully()
     {
-        var createCommand = new UserCreateCommand
+        var createCommand = new CreateUserCommand
         {
             Email = "john.doe@example.com",
             FirstName = "John",
             LastName = "Doe"
         };
 
-        var createdUser = new UserDto
+        var createdUser = new UserResponse
         {
             Id = Guid.NewGuid(),
             Email = createCommand.Email,
@@ -140,8 +143,8 @@ public class UsersEndpointsTests
 
         var result = await InvokePrivateMethod<IResult>("CreateUser", _userServiceMock.Object, createCommand);
 
-        result.Should().BeOfType<Created<UserDto>>();
-        var createdResult = result as Created<UserDto>;
+        result.Should().BeOfType<Created<UserResponse>>();
+        var createdResult = result as Created<UserResponse>;
         createdResult!.Location.Should().Be($"/api/v1/users/{createdUser.Id}");
         createdResult.Value.Should().BeEquivalentTo(createdUser);
     }
@@ -149,7 +152,7 @@ public class UsersEndpointsTests
     [Fact]
     public async Task CreateUser_Should_Return_BadRequest_When_User_Creation_Fails()
     {
-        var createCommand = new UserCreateCommand
+        var createCommand = new CreateUserCommand
         {
             Email = "john.doe@example.com",
             FirstName = "John",
@@ -158,7 +161,7 @@ public class UsersEndpointsTests
 
         _userServiceMock
             .Setup(x => x.CreateAsync(createCommand, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((UserDto)null!);
+            .ReturnsAsync((UserResponse)null!);
 
         var result = await InvokePrivateMethod<IResult>("CreateUser", _userServiceMock.Object, createCommand);
 
@@ -169,12 +172,12 @@ public class UsersEndpointsTests
     public async Task UpdateUser_Should_Return_Ok_When_User_Is_Updated_Successfully()
     {
         var userId = Guid.NewGuid();
-        var updateCommand = new UserUpdateCommand
+        var updateCommand = new UpdateUserCommand
         {
             Email = "john.updated@example.com"
         };
 
-        var updatedUser = new UserDto
+        var updatedUser = new UserResponse
         {
             Id = userId,
             Email = updateCommand.Email,
@@ -189,8 +192,8 @@ public class UsersEndpointsTests
 
         var result = await InvokePrivateMethod<IResult>("UpdateUser", _userServiceMock.Object, userId, updateCommand);
 
-        result.Should().BeOfType<Ok<UserDto>>();
-        var okResult = result as Ok<UserDto>;
+        result.Should().BeOfType<Ok<UserResponse>>();
+        var okResult = result as Ok<UserResponse>;
         okResult!.Value.Should().BeEquivalentTo(updatedUser);
     }
 
@@ -198,14 +201,14 @@ public class UsersEndpointsTests
     public async Task UpdateUser_Should_Return_NotFound_When_User_Does_Not_Exist()
     {
         var userId = Guid.NewGuid();
-        var updateCommand = new UserUpdateCommand
+        var updateCommand = new UpdateUserCommand
         {
             Email = "john.updated@example.com"
         };
 
         _userServiceMock
             .Setup(x => x.UpdateAsync(userId, updateCommand, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((UserDto)null!);
+            .ReturnsAsync((UserResponse)null!);
 
         var result = await InvokePrivateMethod<IResult>("UpdateUser", _userServiceMock.Object, userId, updateCommand);
 
