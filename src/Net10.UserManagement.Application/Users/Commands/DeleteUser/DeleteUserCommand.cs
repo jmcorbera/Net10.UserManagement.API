@@ -1,6 +1,5 @@
+using MediatR;
+
 namespace Net10.UserManagement.Application.Users.Commands.DeleteUser;
 
-public class DeleteUserCommand
-{
-    
-}
+public record DeleteUserCommand(Guid Id) : IRequest<Unit>;

@@ -121,12 +121,11 @@ public class UsersEndpointsTests
     [Fact]
     public async Task CreateUser_Should_Return_Created_When_User_Is_Created_Successfully()
     {
-        var createCommand = new CreateUserCommand
-        {
-            Email = "john.doe@example.com",
-            FirstName = "John",
-            LastName = "Doe"
-        };
+        var createCommand = new CreateUserCommand(
+            "john.doe@example.com",
+            "John",
+            "Doe"
+        );
 
         var createdUser = new UserResponse
         {
@@ -152,12 +151,11 @@ public class UsersEndpointsTests
     [Fact]
     public async Task CreateUser_Should_Return_BadRequest_When_User_Creation_Fails()
     {
-        var createCommand = new CreateUserCommand
-        {
-            Email = "john.doe@example.com",
-            FirstName = "John",
-            LastName = "Doe"
-        };
+        var createCommand = new CreateUserCommand(
+            "john.doe@example.com",
+            "John",
+            "Doe"
+        );
 
         _userServiceMock
             .Setup(x => x.CreateAsync(createCommand, It.IsAny<CancellationToken>()))
@@ -172,10 +170,7 @@ public class UsersEndpointsTests
     public async Task UpdateUser_Should_Return_Ok_When_User_Is_Updated_Successfully()
     {
         var userId = Guid.NewGuid();
-        var updateCommand = new UpdateUserCommand
-        {
-            Email = "john.updated@example.com"
-        };
+        var updateCommand = new UpdateUserCommand(userId, "john.updated@example.com");
 
         var updatedUser = new UserResponse
         {
@@ -201,10 +196,7 @@ public class UsersEndpointsTests
     public async Task UpdateUser_Should_Return_NotFound_When_User_Does_Not_Exist()
     {
         var userId = Guid.NewGuid();
-        var updateCommand = new UpdateUserCommand
-        {
-            Email = "john.updated@example.com"
-        };
+        var updateCommand = new UpdateUserCommand(userId, "john.updated@example.com");
 
         _userServiceMock
             .Setup(x => x.UpdateAsync(userId, updateCommand, It.IsAny<CancellationToken>()))

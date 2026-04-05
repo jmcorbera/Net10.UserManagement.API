@@ -97,12 +97,11 @@ public class UserServiceTests
     public async Task CreateAsync_Should_Create_User_And_Return_UserDto()
     {
         // Arrange
-        var createCommand = new CreateUserCommand
-        {
-            Email = "john.doe@example.com",
-            FirstName = "John",
-            LastName = "Doe"
-        };
+        var createCommand = new CreateUserCommand(
+            "john.doe@example.com",
+            "John",
+            "Doe"
+        );
 
         var repositoryMock = new Mock<IUserRepository>();
         repositoryMock
@@ -127,10 +126,10 @@ public class UserServiceTests
     {
         // Arrange
         var user = User.CreatePending("old@example.com", "John", "Doe");
-        var updateCommand = new UpdateUserCommand
-        {
-            Email = "new@example.com"
-        };
+        var updateCommand = new UpdateUserCommand(
+            user.Id,
+            "new@example.com"
+        );
 
         var repositoryMock = new Mock<IUserRepository>();
         repositoryMock
@@ -156,10 +155,10 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var updateCommand = new UpdateUserCommand
-        {
-            Email = "new@example.com"
-        };
+        var updateCommand = new UpdateUserCommand(
+            userId,
+            "new@example.com"
+        );
 
         var repositoryMock = new Mock<IUserRepository>();
         repositoryMock
