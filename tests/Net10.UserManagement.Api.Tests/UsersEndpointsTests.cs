@@ -1,12 +1,15 @@
 using FluentAssertions;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
 using Net10.UserManagement.Api.Endpoints;
-using Net10.UserManagement.Application.Abstracts;
 using Net10.UserManagement.Application.Users.Models;
 using Net10.UserManagement.Application.Users.Commands.CreateUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
+using Net10.UserManagement.Application.Users.Commands.DeleteUser;
+using Net10.UserManagement.Application.Users.Queries.GetUsers;
+using Net10.UserManagement.Application.Users.Queries.GetUserById;
 
 using System.Reflection;
 
@@ -14,11 +17,11 @@ namespace Net10.UserManagement.Api.Tests;
 
 public class UsersEndpointsTests
 {
-    private readonly Mock<IUserService> _userServiceMock;
+    private readonly Mock<IMediator> _mediatorMock;
 
     public UsersEndpointsTests()
     {
-        _userServiceMock = new Mock<IUserService>();
+        _mediatorMock = new Mock<IMediator>();
     }
 
     [Fact]
@@ -44,11 +47,11 @@ public class UsersEndpointsTests
             }
         };
 
-        _userServiceMock
-            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.IsAny<GetUsersQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(users);
 
-        var result = await InvokePrivateMethod<IResult>("GetUsers", _userServiceMock.Object);
+        var result = await InvokePrivateMethod<IResult>("GetUsers", _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<Ok<IEnumerable<UserResponse>>>();
         var okResult = result as Ok<IEnumerable<UserResponse>>;
@@ -59,11 +62,11 @@ public class UsersEndpointsTests
     [Fact]
     public async Task GetUsers_Should_Return_NotFound_When_No_Users_Exist()
     {
-        _userServiceMock
-            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.IsAny<GetUsersQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<UserResponse>());
 
-        var result = await InvokePrivateMethod<IResult>("GetUsers", _userServiceMock.Object);
+        var result = await InvokePrivateMethod<IResult>("GetUsers", _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<NotFound>();
     }
@@ -71,11 +74,11 @@ public class UsersEndpointsTests
     [Fact]
     public async Task GetUsers_Should_Return_NotFound_When_Users_Is_Null()
     {
-        _userServiceMock
-            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.IsAny<GetUsersQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((IEnumerable<UserResponse>)null!);
 
-        var result = await InvokePrivateMethod<IResult>("GetUsers", _userServiceMock.Object);
+        var result = await InvokePrivateMethod<IResult>("GetUsers", _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<NotFound>();
     }
@@ -93,11 +96,11 @@ public class UsersEndpointsTests
             CreatedAt = DateTime.UtcNow
         };
 
-        _userServiceMock
-            .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<GetUserByIdQuery>(q => q.Id == userId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
-        var result = await InvokePrivateMethod<IResult>("GetUserById", _userServiceMock.Object, userId);
+        var result = await InvokePrivateMethod<IResult>("GetUserById", userId, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<Ok<UserResponse>>();
         var okResult = result as Ok<UserResponse>;
@@ -109,11 +112,11 @@ public class UsersEndpointsTests
     {
         var userId = Guid.NewGuid();
 
-        _userServiceMock
-            .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<GetUserByIdQuery>(q => q.Id == userId), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserResponse)null!);
 
-        var result = await InvokePrivateMethod<IResult>("GetUserById", _userServiceMock.Object, userId);
+        var result = await InvokePrivateMethod<IResult>("GetUserById", userId, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<NotFound>();
     }
@@ -136,11 +139,11 @@ public class UsersEndpointsTests
             CreatedAt = DateTime.UtcNow
         };
 
-        _userServiceMock
-            .Setup(x => x.CreateAsync(createCommand, It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<CreateUserCommand>(c => c.Email == createCommand.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdUser);
 
-        var result = await InvokePrivateMethod<IResult>("CreateUser", _userServiceMock.Object, createCommand);
+        var result = await InvokePrivateMethod<IResult>("CreateUser", createCommand, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<Created<UserResponse>>();
         var createdResult = result as Created<UserResponse>;
@@ -157,11 +160,11 @@ public class UsersEndpointsTests
             "Doe"
         );
 
-        _userServiceMock
-            .Setup(x => x.CreateAsync(createCommand, It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<CreateUserCommand>(c => c.Email == createCommand.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserResponse)null!);
 
-        var result = await InvokePrivateMethod<IResult>("CreateUser", _userServiceMock.Object, createCommand);
+        var result = await InvokePrivateMethod<IResult>("CreateUser", createCommand, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<BadRequest>();
     }
@@ -181,11 +184,11 @@ public class UsersEndpointsTests
             CreatedAt = DateTime.UtcNow
         };
 
-        _userServiceMock
-            .Setup(x => x.UpdateAsync(userId, updateCommand, It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<UpdateUserCommand>(c => c.Id == userId && c.Email == updateCommand.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync(updatedUser);
 
-        var result = await InvokePrivateMethod<IResult>("UpdateUser", _userServiceMock.Object, userId, updateCommand);
+        var result = await InvokePrivateMethod<IResult>("UpdateUser", userId, updateCommand, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<Ok<UserResponse>>();
         var okResult = result as Ok<UserResponse>;
@@ -198,11 +201,11 @@ public class UsersEndpointsTests
         var userId = Guid.NewGuid();
         var updateCommand = new UpdateUserCommand(userId, "john.updated@example.com");
 
-        _userServiceMock
-            .Setup(x => x.UpdateAsync(userId, updateCommand, It.IsAny<CancellationToken>()))
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<UpdateUserCommand>(c => c.Id == userId && c.Email == updateCommand.Email), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserResponse)null!);
 
-        var result = await InvokePrivateMethod<IResult>("UpdateUser", _userServiceMock.Object, userId, updateCommand);
+        var result = await InvokePrivateMethod<IResult>("UpdateUser", userId, updateCommand, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<NotFound>();
     }
@@ -212,14 +215,14 @@ public class UsersEndpointsTests
     {
         var userId = Guid.NewGuid();
 
-        _userServiceMock
-            .Setup(x => x.DeleteAsync(userId, It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
+        _mediatorMock
+            .Setup(x => x.Send(It.Is<DeleteUserCommand>(c => c.Id == userId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Unit.Value);
 
-        var result = await InvokePrivateMethod<IResult>("DeleteUser", _userServiceMock.Object, userId);
+        var result = await InvokePrivateMethod<IResult>("DeleteUser", userId, _mediatorMock.Object, CancellationToken.None);
 
         result.Should().BeOfType<NoContent>();
-        _userServiceMock.Verify(x => x.DeleteAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(x => x.Send(It.Is<DeleteUserCommand>(c => c.Id == userId), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     private static async Task<T> InvokePrivateMethod<T>(string methodName, params object[] parameters)

@@ -1,13 +1,17 @@
-using Net10.UserManagement.Application.Abstracts;
+using MediatR;
 using Net10.UserManagement.Application.Users.Commands.CreateUser;
+using Net10.UserManagement.Application.Users.Commands.DeleteUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
+using Net10.UserManagement.Application.Users.Queries.GetUsers;
+using Net10.UserManagement.Application.Users.Queries.GetUserById;
 
 namespace Net10.UserManagement.Api.Endpoints;
 
 public static class Users
 {
+    
     public static void MapUsersEndpoints(this IEndpointRouteBuilder app)
-    {
+    {     
         var usersGroup = app.MapGroup("api/v1/users")
             .WithTags("Users");
 
@@ -38,45 +42,46 @@ public static class Users
      
     }
 
-    private static async Task<IResult> GetUsers(IUserService userService)
+    private static async Task<IResult> GetUsers(IMediator mediator, CancellationToken cancellationToken)
     {
-        var users = await userService.GetAllAsync();
+        var users = await mediator.Send(new GetUsersQuery(), cancellationToken);
         if (users == null || !users.Any())
             return Results.NotFound();
 
         return Results.Ok(users);
     }
 
-    private static async Task<IResult> GetUserById(IUserService userService, Guid id)
+    private static async Task<IResult> GetUserById(Guid id, IMediator mediator, CancellationToken cancellationToken)
     {
-        var user = await userService.GetByIdAsync(id);
+        var user = await mediator.Send(new GetUserByIdQuery(id), cancellationToken);
         if (user == null)
             return Results.NotFound();
 
         return Results.Ok(user);
     }
 
-    private static async Task<IResult> CreateUser(IUserService userService, CreateUserCommand user)
+    private static async Task<IResult> CreateUser(CreateUserCommand user, IMediator mediator, CancellationToken cancellationToken)
     {
-        var createdUser = await userService.CreateAsync(user);
+        var createdUser = await mediator.Send(user, cancellationToken);
         if (createdUser == null)
             return Results.BadRequest();
 
         return Results.Created($"/api/v1/users/{createdUser.Id}", createdUser);
     }
 
-    private static async Task<IResult> UpdateUser(IUserService userService, Guid id, UpdateUserCommand user)
+    private static async Task<IResult> UpdateUser(Guid id, UpdateUserCommand user, IMediator mediator, CancellationToken cancellationToken)
     {
-        var updatedUser = await userService.UpdateAsync(id, user);
+        user = user with { Id = id };
+        var updatedUser = await mediator.Send(user, cancellationToken);
         if (updatedUser == null)
             return Results.NotFound();
 
         return Results.Ok(updatedUser);
     }
 
-    private static async Task<IResult> DeleteUser(IUserService userService, Guid id)
+    private static async Task<IResult> DeleteUser(Guid id, IMediator mediator, CancellationToken cancellationToken)
     {
-        await userService.DeleteAsync(id);
+        await mediator.Send(new DeleteUserCommand(id), cancellationToken);
         return Results.NoContent();
     }
 

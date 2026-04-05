@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
 using Net10.UserManagement.Application.Users.Commands.CreateUser;
+using Net10.UserManagement.Application.Users.Commands.DeleteUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
-using Net10.UserManagement.Application.Users.Services;
+using Net10.UserManagement.Application.Users.Queries.GetUsers;
+using Net10.UserManagement.Application.Users.Queries.GetUserById;
 using Net10.UserManagement.Domain.Entities;
 using Net10.UserManagement.Domain.Repositories;
 
@@ -24,9 +26,9 @@ public class UserServiceTests
             .Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(users);
 
-        var service = new UserService(repositoryMock.Object);
+        var handler = new GetUsersQueryHandler(repositoryMock.Object);
 
-        var result = (await service.GetAllAsync()).ToList();
+        var result = (await handler.Handle(new GetUsersQuery(), CancellationToken.None)).ToList();
 
         result.Should().HaveCount(1);
         result[0].Id.Should().Be(users[0].Id);
@@ -44,9 +46,9 @@ public class UserServiceTests
             .Setup(repository => repository.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync([]);
 
-        var service = new UserService(repositoryMock.Object);
+        var handler = new GetUsersQueryHandler(repositoryMock.Object);
     
-        var result = await service.GetAllAsync();
+        var result = (await handler.Handle(new GetUsersQuery(), CancellationToken.None)).ToList();
 
         result.Should().BeEmpty();
     }
@@ -61,10 +63,10 @@ public class UserServiceTests
             .Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         
-        var service = new UserService(repositoryMock.Object);
+        var handler = new GetUserByIdQueryHandler(repositoryMock.Object);
         
         // Act
-        var result = await service.GetByIdAsync(user.Id);
+        var result = await handler.Handle(new GetUserByIdQuery(user.Id), CancellationToken.None);
         
         // Assert
         result.Should().NotBeNull();
@@ -84,10 +86,10 @@ public class UserServiceTests
             .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
         
-        var service = new UserService(repositoryMock.Object);
+        var handler = new GetUserByIdQueryHandler(repositoryMock.Object);
         
         // Act
-        var result = await service.GetByIdAsync(userId);
+        var result = await handler.Handle(new GetUserByIdQuery(userId), CancellationToken.None);
         
         // Assert
         result.Should().BeNull();
@@ -108,10 +110,10 @@ public class UserServiceTests
             .Setup(r => r.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((User user, CancellationToken _) => user);
         
-        var service = new UserService(repositoryMock.Object);
+        var service = new CreateUserCommandHandler(repositoryMock.Object);
         
         // Act
-        var result = await service.CreateAsync(createCommand);
+        var result = await service.Handle(createCommand, CancellationToken.None);
         
         // Assert
         result.Should().NotBeNull();
@@ -139,10 +141,10 @@ public class UserServiceTests
             .Setup(r => r.UpdateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((User u, CancellationToken _) => u);
         
-        var service = new UserService(repositoryMock.Object);
+        var service = new UpdateUserCommandHandler(repositoryMock.Object);
         
         // Act
-        var result = await service.UpdateAsync(user.Id, updateCommand);
+        var result = await service.Handle(new UpdateUserCommand(user.Id, updateCommand.Email), CancellationToken.None);
         
         // Assert
         result.Should().NotBeNull();
@@ -165,10 +167,10 @@ public class UserServiceTests
             .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
         
-        var service = new UserService(repositoryMock.Object);
+        var service = new UpdateUserCommandHandler(repositoryMock.Object);
         
         // Act
-        var result = await service.UpdateAsync(userId, updateCommand);
+        var result = await service.Handle(new UpdateUserCommand(userId, updateCommand.Email), CancellationToken.None);
         
         // Assert
         result.Should().BeNull();
@@ -185,10 +187,10 @@ public class UserServiceTests
             .Setup(r => r.DeleteAsync(userId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
         
-        var service = new UserService(repositoryMock.Object);
+        var service = new DeleteUserCommandHandler(repositoryMock.Object);
         
         // Act
-        await service.DeleteAsync(userId);
+        await service.Handle(new DeleteUserCommand(userId), CancellationToken.None);
         
         // Assert
         repositoryMock.Verify(r => r.DeleteAsync(userId, It.IsAny<CancellationToken>()), Times.Once);

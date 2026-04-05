@@ -2,7 +2,7 @@
 using Net10.UserManagement.Application.Users.Commands.CreateUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
 
-namespace Net10.UserManagement.Application.Abstracts;
+namespace Net10.UserManagement.Application.Common.Abstracts;
 
 public interface IUserService
 {
