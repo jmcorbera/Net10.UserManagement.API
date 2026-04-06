@@ -1,7 +1,7 @@
 ﻿using Net10.UserManagement.Domain.Entities;
 using Net10.UserManagement.Domain.Enums;
 
-namespace Net10.UserManagement.Domain.Tests;
+namespace Net10.UserManagement.Domain.Tests.Entities;
 
 public class UserTests
 {

@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
-using Net10.UserManagement.Api.Endpoints;
 using Net10.UserManagement.Application.Users.Models;
 using Net10.UserManagement.Application.Users.Commands.CreateUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
@@ -13,13 +12,13 @@ using Net10.UserManagement.Application.Users.Queries.GetUserById;
 
 using System.Reflection;
 
-namespace Net10.UserManagement.Api.Tests;
+namespace Net10.UserManagement.Api.Tests.Endpoints;
 
-public class UsersEndpointsTests
+public class UsersTest
 {
     private readonly Mock<IMediator> _mediatorMock;
 
-    public UsersEndpointsTests()
+    public UsersTest()
     {
         _mediatorMock = new Mock<IMediator>();
     }
@@ -29,7 +28,7 @@ public class UsersEndpointsTests
     {
         var users = new List<UserResponse>
         {
-            new UserResponse
+            new()
             {
                 Id = Guid.NewGuid(),
                 Email = "john.doe@example.com",
@@ -37,7 +36,7 @@ public class UsersEndpointsTests
                 LastName = "Doe",
                 CreatedAt = DateTime.UtcNow
             },
-            new UserResponse
+            new()
             {
                 Id = Guid.NewGuid(),
                 Email = "jane.doe@example.com",
@@ -64,7 +63,7 @@ public class UsersEndpointsTests
     {
         _mediatorMock
             .Setup(x => x.Send(It.IsAny<GetUsersQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<UserResponse>());
+            .ReturnsAsync([]);
 
         var result = await InvokePrivateMethod<IResult>("GetUsers", _mediatorMock.Object, CancellationToken.None);
 
@@ -227,9 +226,8 @@ public class UsersEndpointsTests
 
     private static async Task<T> InvokePrivateMethod<T>(string methodName, params object[] parameters)
     {
-        var method = typeof(Users).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-        if (method == null)
-            throw new InvalidOperationException($"Method {methodName} not found");
+        var method = typeof(Api.Endpoints.Users).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static) 
+            ?? throw new InvalidOperationException($"Method {methodName} not found");
 
         var result = method.Invoke(null, parameters);
         if (result is Task<T> task)
