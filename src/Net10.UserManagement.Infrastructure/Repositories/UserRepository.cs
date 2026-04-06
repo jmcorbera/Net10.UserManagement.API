@@ -22,6 +22,11 @@ public class UserRepository : IUserRepository
     {
         return await Task.FromResult<User?>(_users.FirstOrDefault(u => u.Id == id));
     }
+    
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await Task.FromResult<User?>(_users.FirstOrDefault(u => u.Email == email));
+    }
 
     public async Task<User> CreateAsync(User user, CancellationToken cancellationToken = default)
     {
