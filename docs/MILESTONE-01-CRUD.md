@@ -76,10 +76,10 @@ src/
 ### Base Configuration
 
 #### Tasks
-- [x] Verify and adjust project references
-- [x] Configure `.env` and `.env.example` files (no `appsettings.json`)
-- [x] Implement environment variable loading with `DotNetEnv`
-- [x] Configure `Program.cs` with all base services
+- [ ] Verify and adjust project references
+- [ ] Configure `.env` and `.env.example` files (no `appsettings.json`)
+- [ ] Implement environment variable loading with `DotNetEnv`
+- [ ] Configure `Program.cs` with all base services
 
 #### Implementation Details
 
@@ -108,10 +108,10 @@ ASPNETCORE_URLS=http://localhost:5000;https://localhost:5001
 ### Add Health Checks
 
 #### Tasks
-- [x] Add `Microsoft.Extensions.Diagnostics.HealthChecks` package
-- [x] Create `/health/live` endpoint to verify API status
-- [x] Create `/health/ready` endpoint for readiness checks
-- [x] Configure basic health checks (memory, disk)
+- [ ] Add `Microsoft.Extensions.Diagnostics.HealthChecks` package
+- [ ] Create `/health/live` endpoint to verify API status
+- [ ] Create `/health/ready` endpoint for readiness checks
+- [ ] Configure basic health checks (memory, disk)
 
 #### Implementation Details
 
@@ -141,10 +141,10 @@ services.AddHealthChecks()
 ### Add Scalar/OpenAPI Documentation
 
 #### Tasks
-- [x] Configure complete Scalar/OpenAPI documentation
-- [x] Add descriptions to endpoints
-- [x] Configure API versioning (v1)
-- [x] Integrate Scalar UI for modern documentation interface
+- [ ] Configure complete Scalar/OpenAPI documentation
+- [ ] Add descriptions to endpoints
+- [ ] Configure API versioning (v1)
+- [ ] Integrate Scalar UI for modern documentation interface
 
 #### Implementation Details
 
@@ -190,9 +190,9 @@ services.AddOpenApi(options =>
 ### User Entity Enhancement
 
 ##### Tasks
-- [x] Add `Status` enum (Pending/Active/Inactive)
-- [x] Add basic validations to the model
-- [x] Update tests for new properties
+- [ ] Add `Status` enum (Pending/Active/Inactive)
+- [ ] Add basic validations to the model
+- [ ] Update tests for new properties
 
 **Key Files:**
 - `src/Net10.UserManagement.Domain/Entities/User.cs` - User entity
@@ -209,11 +209,11 @@ services.AddOpenApi(options =>
 ### User CRUD Operations
 
 #### Tasks
-- [x] Implement `GET /api/v1/users` - List all users
-- [x] Implement `GET /api/v1/users/{id}` - Get user by ID
-- [x] Implement `POST /api/v1/users` - Create user
-- [x] Implement `PUT /api/v1/users/{id}` - Update user
-- [x] Implement `DELETE /api/v1/users/{id}` - Delete user (hard delete)
+- [ ] Implement `GET /api/v1/users` - List all users
+- [ ] Implement `GET /api/v1/users/{id}` - Get user by ID
+- [ ] Implement `POST /api/v1/users` - Create user
+- [ ] Implement `PUT /api/v1/users/{id}` - Update user
+- [ ] Implement `DELETE /api/v1/users/{id}` - Delete user (hard delete)
 
 #### Implementation Details
 
@@ -245,10 +245,10 @@ services.AddOpenApi(options =>
 ### Repository Pattern
 
 #### Tasks
-- [x] Create `IUserRepository` interface with CRUD operations
-- [x] Implement in-memory repository for testing
-- [x] Configure repository in DI container
-- [x] Update service to use repository
+- [ ] Create `IUserRepository` interface with CRUD operations
+- [ ] Implement in-memory repository for testing
+- [ ] Configure repository in DI container
+- [ ] Update service to use repository
 
 **Key Files:**
 - `src/Net10.UserManagement.Domain/Repositories/IUserRepository.cs` - Repository interface
@@ -270,9 +270,9 @@ services.AddOpenApi(options =>
 ### Unit Testing Setup
 
 #### Tasks
-- [x] Configure xUnit testing framework
-- [x] Create unit tests for User entity
-- [x] Configure basic test coverage reporting
+- [ ] Configure xUnit testing framework
+- [ ] Create unit tests for User entity
+- [ ] Configure basic test coverage reporting
 
 #### Implementation Details
 
