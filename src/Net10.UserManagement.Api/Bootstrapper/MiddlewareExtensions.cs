@@ -21,6 +21,7 @@ public static class MiddlewareExtensions
         app.UseAuthorization();
 
         app.MapUsersEndpoints();
+        app.MapAuthEndpoints();
         app.MapHealthEndpoints();
 
         return app;

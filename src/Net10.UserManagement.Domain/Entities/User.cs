@@ -1,19 +1,24 @@
+using System.Text.RegularExpressions;
 using Net10.UserManagement.Domain.Enums;
 
 namespace Net10.UserManagement.Domain.Entities;
 
-public class User
+public partial class User
 {
     public Guid Id { get; private set; }
+
+    public string Identification { get; private set; } = null!;
+    public string? PasswordHash { get; private set; }
     public string Email { get; private set; } = null!;
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public Status Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    private User(string email, string firstName, string lastName)
+    private User(string identification, string email, string firstName, string lastName)
     {
         Id = Guid.NewGuid();
+        SetIdentification(identification);
         SetEmail(email);
         SetFirstName(firstName);
         SetLastName(lastName);
@@ -21,14 +26,30 @@ public class User
         SetPending();
     }
 
-    public static User CreatePending(string email, string firstName, string lastName)
+    public static User CreatePending(string identification, string email, string firstName, string lastName)
     {
-        return new User(email, firstName, lastName);
+        return new User(identification, email, firstName, lastName);
+    }
+
+    public void SetPasswordHash(string passwordHash)
+    {
+        PasswordHash = passwordHash;
     }
 
     public void UpdateEmail(string newEmail)
     {
         SetEmail(newEmail);
+    }
+
+    public void SetIdentification(string identification)
+    {
+        if (string.IsNullOrWhiteSpace(identification))
+            throw new ArgumentException("Identification cannot be empty", nameof(identification));
+
+        if(!IdentificationRegex().IsMatch(identification))
+            throw new ArgumentException("Identification must be 7 or 8 digits", nameof(identification));
+
+        Identification = identification;
     }
 
     private void SetFirstName(string firstName)
@@ -64,5 +85,7 @@ public class User
     public void Activate() => Status = Status.Active;
     public void Deactivate() => Status = Status.Inactive;
     public void SetPending() => Status = Status.Pending;
-
+    
+    [GeneratedRegex(@"^\d{7,8}$")]
+    private static partial Regex IdentificationRegex();
 }

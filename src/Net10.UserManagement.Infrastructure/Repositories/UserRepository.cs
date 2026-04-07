@@ -22,6 +22,11 @@ public class UserRepository : IUserRepository
     {
         return await Task.FromResult<User?>(_users.FirstOrDefault(u => u.Id == id));
     }
+
+    public async Task<User?> GetByIdentificationAsync(string identification, CancellationToken cancellationToken = default)
+    {
+        return await Task.FromResult<User?>(_users.FirstOrDefault(u => u.Identification == identification));
+    }
     
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
@@ -51,15 +56,16 @@ public class UserRepository : IUserRepository
     private void InitializeUsers()
     {
         _users.AddRange(Enumerable.Range(1, 5).Select(index => User.CreatePending(
-            $"{Names[index - 1].Item1.ToLower()}.{Names[index - 1].Item2.ToLower()}@example.com",
             Names[index - 1].Item1,
-            Names[index - 1].Item2
+            $"{Names[index - 1].Item2.ToLower()}.{Names[index - 1].Item3.ToLower()}@example.com",
+            Names[index - 1].Item2,
+            Names[index - 1].Item3
         )));
     }
 
-    private static readonly (string, string)[] Names =
+    private static readonly (string, string, string)[] Names =
     [
-        ("John", "Doe"), ("Jane", "Smith"), ("Bob", "Johnson"), ("Alice", "Williams"), ("Charlie", "Brown"),
-        ("David", "Jones"), ("Eve", "Garcia"), ("Frank", "Miller"), ("Grace", "Davis"), ("Henry", "Rodriguez")
+        ("12345678", "John", "Doe"), ("98765432", "Jane", "Smith"), ("45678912", "Bob", "Johnson"), ("32165498", "Alice", "Williams"), ("65432178", "Charlie", "Brown"),
+        ("78945612", "David", "Jones"), ("14725836", "Eve", "Garcia"), ("36925814", "Frank", "Miller"), ("95175385", "Grace", "Davis"), ("85296374", "Henry", "Rodriguez")
     ];
 }

@@ -1,5 +1,4 @@
 using MediatR;
-using Net10.UserManagement.Application.Users.Commands.CreateUser;
 using Net10.UserManagement.Application.Users.Commands.DeleteUser;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
 using Net10.UserManagement.Application.Users.Queries.GetUsers;
@@ -24,11 +23,6 @@ public static class Users
             .WithName("GetUserById")
             .WithSummary("Get user by ID")
             .WithDescription("Retrieves a user by their ID");
-
-        usersGroup.MapPost("/", CreateUser)
-            .WithName("CreateUser")
-            .WithSummary("Create a new user")
-            .WithDescription("Creates a new user");
 
         usersGroup.MapPut("/{id}", UpdateUser)
             .WithName("UpdateUser")
@@ -58,15 +52,6 @@ public static class Users
             return Results.NotFound();
 
         return Results.Ok(user);
-    }
-
-    private static async Task<IResult> CreateUser(CreateUserCommand user, IMediator mediator, CancellationToken cancellationToken)
-    {
-        var createdUser = await mediator.Send(user, cancellationToken);
-        if (createdUser == null)
-            return Results.BadRequest();
-
-        return Results.Created($"/api/v1/users/{createdUser.Id}", createdUser);
     }
 
     private static async Task<IResult> UpdateUser(Guid id, UpdateUserCommand user, IMediator mediator, CancellationToken cancellationToken)
