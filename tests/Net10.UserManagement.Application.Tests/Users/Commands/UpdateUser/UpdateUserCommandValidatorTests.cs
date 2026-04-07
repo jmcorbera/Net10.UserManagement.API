@@ -1,4 +1,3 @@
-using FluentAssertions;
 using FluentValidation.TestHelper;
 using Moq;
 using Net10.UserManagement.Application.Users.Commands.UpdateUser;
@@ -68,7 +67,7 @@ public class UpdateUserCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_Email_Already_Exists()
     {
-        var existingUser = User.CreatePending("existing@example.com", "Existing", "User");
+        var existingUser = User.CreatePending("12345678", "existing@example.com", "Existing", "User");
         var command = new UpdateUserCommand(Guid.NewGuid(), "existing@example.com");
         
         _repositoryMock

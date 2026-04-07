@@ -13,7 +13,7 @@ public class UpdateUserCommandHandlerTests
     [Fact]
     public async Task UpdateAsync_Should_Update_User_Email_And_Return_UserResponse()
     {
-        var user = User.CreatePending("old@example.com", "John", "Doe");
+        var user = User.CreatePending("12345678", "old@example.com", "John", "Doe");
         var updateCommand = new UpdateUserCommand(
             user.Id,
             "new@example.com"

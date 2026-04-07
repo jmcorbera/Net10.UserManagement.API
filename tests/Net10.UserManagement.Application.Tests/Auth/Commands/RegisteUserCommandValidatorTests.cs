@@ -1,22 +1,23 @@
-using FluentAssertions;
 using FluentValidation.TestHelper;
-using Net10.UserManagement.Application.Users.Commands.CreateUser;
+using Moq;
+using Net10.UserManagement.Application.Auth.Commands.RegisterUser;
+using Net10.UserManagement.Domain.Repositories;
 
-namespace Net10.UserManagement.Application.Tests.Users.Commands.CreateUser;
+namespace Net10.UserManagement.Application.Tests.Auth.Commands;
 
-public class CreateUserCommandValidatorTests
+public class RegisterUserCommandValidatorTests
 {
-    private readonly CreateUserCommandValidator _validator;
+    private readonly RegisterUserCommandValidator _validator;
 
-    public CreateUserCommandValidatorTests()
+    public RegisterUserCommandValidatorTests()
     {
-        _validator = new CreateUserCommandValidator();
+        _validator = new RegisterUserCommandValidator(Mock.Of<IUserRepository>());
     }
 
     [Fact]
     public async Task Should_Have_Error_When_Email_Is_Empty()
     {
-        var command = new CreateUserCommand("", "John", "Doe");
+        var command = new RegisterUserCommand("12345678", "", "John", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -27,7 +28,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_Email_Is_Invalid()
     {
-        var command = new CreateUserCommand("invalid-email", "John", "Doe");
+        var command = new RegisterUserCommand("12345678", "invalid-email", "John", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -38,7 +39,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Error_When_Email_Is_Valid()
     {
-        var command = new CreateUserCommand("john.doe@example.com", "John", "Doe");
+        var command = new RegisterUserCommand("12345678", "john.doe@example.com", "John", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -48,7 +49,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_FirstName_Is_Empty()
     {
-        var command = new CreateUserCommand("john.doe@example.com", "", "Doe");
+        var command = new RegisterUserCommand("12345678", "john.doe@example.com", "", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -59,7 +60,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Error_When_FirstName_Is_Valid()
     {
-        var command = new CreateUserCommand("john.doe@example.com", "John", "Doe");
+        var command = new RegisterUserCommand("12345678", "john.doe@example.com", "John", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -69,7 +70,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_LastName_Is_Empty()
     {
-        var command = new CreateUserCommand("john.doe@example.com", "John", "");
+        var command = new RegisterUserCommand("12345678", "john.doe@example.com", "John", "");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -80,7 +81,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Error_When_LastName_Is_Valid()
     {
-        var command = new CreateUserCommand("john.doe@example.com", "John", "Doe");
+        var command = new RegisterUserCommand("12345678", "john.doe@example.com", "John", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -90,7 +91,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Error_When_All_Fields_Are_Valid()
     {
-        var command = new CreateUserCommand("john.doe@example.com", "John", "Doe");
+        var command = new RegisterUserCommand("12345678", "john.doe@example.com", "John", "Doe");
         
         var result = await _validator.TestValidateAsync(command);
         
@@ -100,7 +101,7 @@ public class CreateUserCommandValidatorTests
     [Fact]
     public async Task Should_Have_Multiple_Errors_When_Multiple_Fields_Are_Invalid()
     {
-        var command = new CreateUserCommand("", "", "");
+        var command = new RegisterUserCommand("", "", "", "");
         
         var result = await _validator.TestValidateAsync(command);
         
