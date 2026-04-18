@@ -17,6 +17,10 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
             .MustAsync(BeUniqueIdentification)
             .WithMessage("Identification already exists");
         
+        RuleFor(x => x.IdentificationType)
+            .NotEmpty().WithMessage("Identification type is required")
+            .Must(type => type >= 1 && type <= 2).WithMessage("Invalid identification type");
+        
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required")
             .EmailAddress().WithMessage("Email is invalid")

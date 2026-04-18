@@ -8,6 +8,7 @@ public partial class User
     public Guid Id { get; private set; }
 
     public string Identification { get; private set; } = null!;
+    public int IdentificationTypeId { get; private set; }
     public string? PasswordHash { get; private set; }
     public string Email { get; private set; } = null!;
     public string FirstName { get; private set; } = null!;
@@ -15,10 +16,11 @@ public partial class User
     public Status Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    private User(string identification, string email, string firstName, string lastName)
+    private User(string identification, int identificationTypeId, string email, string firstName, string lastName)
     {
         Id = Guid.NewGuid();
         SetIdentification(identification);
+        IdentificationTypeId = identificationTypeId;
         SetEmail(email);
         SetFirstName(firstName);
         SetLastName(lastName);
@@ -26,9 +28,9 @@ public partial class User
         SetPending();
     }
 
-    public static User CreatePending(string identification, string email, string firstName, string lastName)
+    public static User CreatePending(string identification, int identificationTypeId, string email, string firstName, string lastName)
     {
-        return new User(identification, email, firstName, lastName);
+        return new User(identification, identificationTypeId, email, firstName, lastName);
     }
 
     public void SetPasswordHash(string passwordHash)
@@ -39,6 +41,13 @@ public partial class User
     public void UpdateEmail(string newEmail)
     {
         SetEmail(newEmail);
+    }
+
+    public void SetIdentificationTypeId(int identificationTypeId)
+    {
+        if(identificationTypeId != (int)IdentificationType.DNI && identificationTypeId != (int)IdentificationType.Passport)
+            throw new ArgumentException($"Identification type must be {(int)IdentificationType.DNI} or {(int)IdentificationType.Passport}", nameof(identificationTypeId));
+        IdentificationTypeId = identificationTypeId;
     }
 
     public void SetIdentification(string identification)

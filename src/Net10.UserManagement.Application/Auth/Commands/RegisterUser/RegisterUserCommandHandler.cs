@@ -11,7 +11,7 @@ public class RegisterUserCommandHandler(IUserRepository userRepository, IOtpGene
 {
     public async Task<RegisterUserResponse?> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {       
-        var newUser = User.CreatePending(request.Identification, request.Email, request.FirstName, request.LastName);
+        var newUser = User.CreatePending(request.Identification, request.IdentificationType, request.Email, request.FirstName, request.LastName);
         var result = await userRepository.CreateAsync(newUser, cancellationToken) ?? throw new Exception("User creation failed");
         
         var otp = GenerateOtp(newUser.Id);

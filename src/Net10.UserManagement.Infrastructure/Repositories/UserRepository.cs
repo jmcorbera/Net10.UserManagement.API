@@ -56,7 +56,8 @@ public class UserRepository : IUserRepository
     private void InitializeUsers()
     {
         _users.AddRange(Enumerable.Range(1, 5).Select(index => User.CreatePending(
-            Names[index - 1].Item1,
+            new Random().Next(1000000, 99999999).ToString(),
+            new Random().Next(1, 2),
             $"{Names[index - 1].Item2.ToLower()}.{Names[index - 1].Item3.ToLower()}@example.com",
             Names[index - 1].Item2,
             Names[index - 1].Item3
