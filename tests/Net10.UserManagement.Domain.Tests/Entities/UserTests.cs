@@ -8,7 +8,7 @@ public class UserTests
     [Fact]
     public void CreatePending_Should_Create_User_With_Pending_Status()
     {
-        var user = User.CreatePending("12345678", "jane.doe@example.com", "Jane", "Doe");
+        var user = User.CreatePending("12345678", 1,"jane.doe@example.com", "Jane", "Doe");
 
         Assert.NotEqual(Guid.Empty, user.Id);
         Assert.Equal("12345678", user.Identification);
@@ -24,10 +24,10 @@ public class UserTests
     {
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("", "test@example.com", "John", "Doe"));
+            User.CreatePending("", 1, "test@example.com", "John", "Doe"));
 
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending(null!, "test@example.com", "John", "Doe"));
+            User.CreatePending(null!, 1, "test@example.com", "John", "Doe"));
     }
     
     [Fact]
@@ -35,7 +35,7 @@ public class UserTests
     {
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("1234567890123456789012345678901234567890","invalid-email", "John", "Doe"));
+            User.CreatePending("1234567890123456789012345678901234567890", 1, "invalid-email", "John", "Doe"));
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class UserTests
     {
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("12345678","invalid-email", "John", "Doe"));
+            User.CreatePending("12345678", 1, "invalid-email", "John", "Doe"));
     }
 
     [Fact]
@@ -51,10 +51,10 @@ public class UserTests
     {
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("12345678", "test@example.com", "", "Doe"));
+            User.CreatePending("12345678", 1, "test@example.com", "", "Doe"));
 
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("12345678", "test@example.com", null!, "Doe"));
+            User.CreatePending("12345678", 1, "test@example.com", null!, "Doe"));
     }
     
     [Fact]
@@ -62,16 +62,16 @@ public class UserTests
     {
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("12345678", "test@example.com", "John", ""));
+            User.CreatePending("12345678", 1, "test@example.com", "John", ""));
 
         Assert.Throws<ArgumentException>(() =>
-            User.CreatePending("12345678", "test@example.com", "John", null!));
+            User.CreatePending("12345678", 1, "test@example.com", "John", null!));
     }
 
     [Fact]
     public void Activate_Should_Change_Status_To_Active()
     {
-        var user = User.CreatePending("12345678", "test@example.com", "John", "Doe");
+        var user = User.CreatePending("12345678", 1, "test@example.com", "John", "Doe");
         
         user.Activate();
         
@@ -81,7 +81,7 @@ public class UserTests
     [Fact]
     public void Deactivate_Should_Change_Status_To_Inactive()
     {
-        var user = User.CreatePending("12345678", "test@example.com", "John", "Doe");
+        var user = User.CreatePending("12345678", 1, "test@example.com", "John", "Doe");
         
         user.Deactivate();
         
@@ -91,7 +91,7 @@ public class UserTests
     [Fact]
     public void UpdateEmail_Should_Update_Email_Successfully()
     {
-        var user = User.CreatePending("12345678", "old@example.com", "John", "Doe");
+        var user = User.CreatePending("12345678", 1, "old@example.com", "John", "Doe");
         
         user.UpdateEmail("new@example.com");
         
@@ -101,7 +101,7 @@ public class UserTests
     [Fact]
     public void UpdateEmail_Should_Throw_When_Email_Is_Invalid()
     {
-        var user = User.CreatePending("12345678", "old@example.com", "John", "Doe");
+        var user = User.CreatePending("12345678", 1, "old@example.com", "John", "Doe");
         
         Assert.Throws<ArgumentException>(() => user.UpdateEmail("invalid-email"));
     }

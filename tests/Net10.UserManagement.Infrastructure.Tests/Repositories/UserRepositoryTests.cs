@@ -69,7 +69,7 @@ public class UserRepositoryTests
     public async Task CreateAsync_Should_Add_User_To_Repository()
     {
         var repository = new UserRepository();
-        var newUser = User.CreatePending("12345678", "new.user@example.com", "New", "User");
+        var newUser = User.CreatePending("12345678", 1, "new.user@example.com", "New", "User");
         
         var createdUser = await repository.CreateAsync(newUser);
         
@@ -85,7 +85,7 @@ public class UserRepositoryTests
     {
         var repository = new UserRepository();
         var initialCount = (await repository.GetAllAsync()).Count();
-        var newUser = User.CreatePending("12345678", "another.user@example.com", "Another", "User");
+        var newUser = User.CreatePending("12345678", 1, "another.user@example.com", "Another", "User");
         
         await repository.CreateAsync(newUser);
         
@@ -97,7 +97,7 @@ public class UserRepositoryTests
     public async Task UpdateAsync_Should_Return_Updated_User()
     {
         var repository = new UserRepository();
-        var user = User.CreatePending("12345678", "update.test@example.com", "Update", "Test");
+        var user = User.CreatePending("12345678", 1, "update.test@example.com", "Update", "Test");
         await repository.CreateAsync(user);
         
         user.UpdateEmail("updated.email@example.com");
@@ -111,7 +111,7 @@ public class UserRepositoryTests
     public async Task DeleteAsync_Should_Remove_User_From_Repository()
     {
         var repository = new UserRepository();
-        var user = User.CreatePending("12345678", "delete.test@example.com", "Delete", "Test");
+        var user = User.CreatePending("12345678", 1, "delete.test@example.com", "Delete", "Test");
         await repository.CreateAsync(user);
         
         await repository.DeleteAsync(user.Id);
@@ -124,7 +124,7 @@ public class UserRepositoryTests
     public async Task DeleteAsync_Should_Decrease_User_Count()
     {
         var repository = new UserRepository();
-        var user = User.CreatePending("12345678", "count.test@example.com", "Count", "Test");
+        var user = User.CreatePending("12345678", 1, "count.test@example.com", "Count", "Test");
         await repository.CreateAsync(user);
         var countBeforeDelete = (await repository.GetAllAsync()).Count();
         

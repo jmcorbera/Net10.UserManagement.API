@@ -13,7 +13,7 @@ public class GetUserByIdQueryHandlerTests
     [Fact]
     public async Task GetByIdAsync_Should_Return_UserResponse_When_User_Exists()
     {
-        var user = User.CreatePending("12345678", "test@example.com", "John", "Doe");
+        var user = User.CreatePending("12345678", 1, "test@example.com", "John", "Doe");
         var repositoryMock = new Mock<IUserRepository>();
         repositoryMock
             .Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))

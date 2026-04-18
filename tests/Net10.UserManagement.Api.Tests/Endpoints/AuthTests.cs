@@ -23,6 +23,7 @@ public class AuthTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"
@@ -59,6 +60,7 @@ public class AuthTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"
@@ -78,6 +80,7 @@ public class AuthTests
     {
         var command = new RegisterUserCommand(
             "87654321",
+            1,
             "jane.doe@example.com",
             "Jane",
             "Doe"
@@ -113,6 +116,7 @@ public class AuthTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "test@example.com",
             "Test",
             "User"

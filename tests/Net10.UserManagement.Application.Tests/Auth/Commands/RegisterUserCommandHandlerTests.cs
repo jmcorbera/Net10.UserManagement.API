@@ -5,6 +5,7 @@ using Net10.UserManagement.Application.Auth.Commands.RegisterUser;
 using Net10.UserManagement.Application.Auth.Models;
 using Net10.UserManagement.Application.Common.Abstractions;
 using Net10.UserManagement.Domain.Entities;
+using Net10.UserManagement.Domain.Enums;
 using Net10.UserManagement.Domain.Repositories;
 
 namespace Net10.UserManagement.Application.Tests.Auth.Commands;
@@ -43,16 +44,19 @@ public class RegisterUserCommandHandlerTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"
         );
 
         var expectedOtpCode = "123456";
-        var createdUser = User.CreatePending(command.Identification, command.Email, command.FirstName, command.LastName);
+        var createdUser = User.CreatePending(command.Identification, 1, command.Email, command.FirstName, command.LastName);
         var expectedResponse = new RegisterUserResponse
         {
             Id = createdUser.Id,
+            Identification = command.Identification,
+            IdentificationType = IdentificationType.DNI.ToString(),
             Email = command.Email,
             FirstName = command.FirstName,
             LastName = command.LastName,
@@ -97,6 +101,7 @@ public class RegisterUserCommandHandlerTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"
@@ -119,6 +124,7 @@ public class RegisterUserCommandHandlerTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"
@@ -167,6 +173,7 @@ public class RegisterUserCommandHandlerTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"
@@ -215,6 +222,7 @@ public class RegisterUserCommandHandlerTests
     {
         var command = new RegisterUserCommand(
             "12345678",
+            1,
             "john.doe@example.com",
             "John",
             "Doe"

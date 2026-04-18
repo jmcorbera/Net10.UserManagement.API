@@ -15,7 +15,7 @@ public class GetUsersQueryHandlerTests
     {
         var users = new[]
         {
-            User.CreatePending("12345678", "john.doe@example.com", "John", "Doe")
+            User.CreatePending("12345678", 1, "john.doe@example.com", "John", "Doe")
         };
 
         var repositoryMock = new Mock<IUserRepository>();
